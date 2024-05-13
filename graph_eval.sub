@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH -J test_file                         # Job name
-#SBATCH -o llama3_8_%j.out                  # output file (%j expands to jobID) test_file_%j.out
-#SBATCH -e llama3_8_%j.err                  # error log file (%j expands to jobID) test_file_%j.err
+#SBATCH -o opt_6_7_%j.out                  # output file (%j expands to jobID) test_file_%j.out
+#SBATCH -e opt_6_7_%j.err                  # error log file (%j expands to jobID) test_file_%j.err
 #SBATCH --mail-type=ALL                      # Request status by email 
 #SBATCH --mail-user=clc348@cornell.edu       # Email address to send results to.
 #SBATCH -N 1                                 # Total number of nodes requested
@@ -10,19 +10,20 @@
 #SBATCH --get-user-env                       # retrieve the users login environment
 #SBATCH --mem=16G                           # server memory requested (per node)
 #SBATCH -t 2:00:00                           # Time limit (hh:mm:ss)
-#SBATCH --partition=default_partition       # Request partition, --partition=default_partition       
-#SBATCH --gres=gpu:titanrtx:2              # Type/number of GPUs needed, --gres=gpu:1080ti:1, gpu:titanrtx:4,lee-compute-01, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri-interactive
+#SBATCH --partition=nlplarge-lillian-highpri       # Request partition, --partition=default_partition       
+#SBATCH --gres=gpu:a100:2              # Type/number of GPUs needed, --gres=gpu:1080ti:1, gpu:titanrtx:4,lee-compute-01, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri-interactive
 
 # Define arguments for Python file
-MODEL="llama3" # ["llama2", "llama3", "opt", "openelm", "mistral", "phi"]
-SIZE="8B" 
+MODEL="opt" # ["llama2", "llama3", "opt", "openelm", "mistral", "mixtral", "phi"]
+SIZE="6.7b" 
 
 # opt: 125m, 350m, 1.3b, 6.7b 
 # openelm: 270M, 450M, 1_1B, 3B # not built for these types of questions
 # llama2: 7b, 13b, 70b 
 # llama3: 8B, 70B
-# mistral: 7B
-# phi: 4k, 128k
+# mistral: 7B "mistralai/Mixtral-8x7B-Instruct-v0.1"
+# mixtral: 7B, 22B
+# phi: 4k, 128k # doesn't output anything?
 
 # Run Python file with arguments
 python3 model_eval.py --model $MODEL --size $SIZE

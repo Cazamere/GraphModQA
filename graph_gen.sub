@@ -11,10 +11,10 @@
 #SBATCH --mem=16G                           # server memory requested (per node)
 #SBATCH -t 2:00:00                           # Time limit (hh:mm:ss)
 #SBATCH --partition=default_partition       # Request partition, --partition=default_partition       
-#SBATCH --gres=gpu:titanrtx:4              # Type/number of GPUs needed, --gres=gpu:1080ti:1, gpu:titanrtx:4(S:0-1),lee-compute-01, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri-interactive
+#SBATCH --gres=gpu:1080ti:1              # Type/number of GPUs needed, --gres=gpu:1080ti:1, gpu:titanrtx:4(S:0-1),lee-compute-01, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri-interactive
 
 # Define arguments
-n_graphs=2
+n_graphs=20
 n_nodes=5
 p=0.5
 prompt_type="add_edge"
