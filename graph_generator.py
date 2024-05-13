@@ -30,7 +30,7 @@ def generate_data(n_graphs, n_nodes, p, prompt_type):
             node_a, node_b = random.sample(unconnected_nodes, 1)[0]
 
             # Create prompt string
-            prompt = f"Add an edge from node {node_a} to node {node_b}"
+            prompt = f"Add an edge between node {node_a} and node {node_b}"
 
             # Save prompt to file
             prompt_filename = f"data/prompts/prompt_{i}.txt"
@@ -46,7 +46,7 @@ def generate_data(n_graphs, n_nodes, p, prompt_type):
 
             # Create prompt string
             node_a, node_b = edge
-            prompt = f"Remove the edge from node {node_a} to node {node_b}"
+            prompt = f"Remove the edge between node {node_a} and node {node_b}"
 
             # Save prompt to file
             prompt_filename = f"data/prompts/prompt_{i}.txt"
