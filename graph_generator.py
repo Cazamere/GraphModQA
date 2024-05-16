@@ -76,9 +76,10 @@ def generate_data(n_graphs, n_nodes, p):
             graph_file.write(graph_str)
 
         init_prompt = "The following matrix represents the adjacency matrix of an undirected graph, where the first row corresponds to node 0, the second row corresponds to node 1, and so on: \n"
-        end_matrix_prompt = ", and only write the resulting adjacency matrix."
-        end_count_prompt = ", and only write the result."
-        end_yes_no_prompt = ", and only write 'Yes' or 'No'."
+        end_matrix_prompt = "A: Final answer: The resulting adjacency matrix is: "
+        #end_count_prompt = ", and surround your final answer in parentheses, like this: (answer). \nA:" # kind of works
+        end_count_prompt = "A: Final answer: The final answer is: "
+        end_yes_no_prompt = "A: Final answer: The final answer is: " #TODO: something like "present answer as _"
         # Graph augmentation tasks
 
         # ----------------------------
@@ -95,8 +96,8 @@ def generate_data(n_graphs, n_nodes, p):
         node_a, node_b = random.sample(unconnected_nodes, 1)[0]
 
         # Create prompt string
-        add_edge_prompt = f"Add an edge between node {node_a} and node {node_b}"
-        full_add_edge_prompt = init_prompt + graph_str + ". " + add_edge_prompt + end_matrix_prompt
+        add_edge_prompt = f"Q: Add an edge between node {node_a} and node {node_b}. Only write the resulting adjacency matrix.\n"
+        full_add_edge_prompt = init_prompt + graph_str + "\n" + add_edge_prompt + end_matrix_prompt
 
         # Save prompt to file
         prompt_filename = f"data/prompts/add_edge/prompt_{i}.txt"
@@ -124,8 +125,8 @@ def generate_data(n_graphs, n_nodes, p):
 
         # Create prompt string
         node_a, node_b = edge
-        remove_edge_prompt = f"Remove the edge between node {node_a} and node {node_b}"
-        full_remove_edge_prompt = init_prompt + graph_str + ". " + remove_edge_prompt + end_matrix_prompt
+        remove_edge_prompt = f"Q: Remove the edge between node {node_a} and node {node_b}. Only write the resulting adjacency matrix.\n"
+        full_remove_edge_prompt = init_prompt + graph_str + "\n" + remove_edge_prompt + end_matrix_prompt
 
         # Save prompt to file
         prompt_filename = f"data/prompts/remove_edge/prompt_{i}.txt"
@@ -137,7 +138,7 @@ def generate_data(n_graphs, n_nodes, p):
         remove_edge_graph.remove_edge(*edge)
 
         # Convert graph to string
-        new_graph_str = str(nx.adjacency_matrix(remove_edge_graph).todense())
+        new_graph_str = str(nx.adjacency_matrix(remove_edge_graph).todense().astype(int))
 
         # Write new graph to file
         solution_filename = f"data/solutions/remove_edge/solution_{i}.txt"
@@ -152,8 +153,8 @@ def generate_data(n_graphs, n_nodes, p):
 
         node_count = graph.number_of_nodes()
         # Create prompt string
-        node_count_prompt = f"Count the number of nodes in the graph"
-        full_node_count_prompt = init_prompt + graph_str + ". " + node_count_prompt + end_count_prompt
+        node_count_prompt = f"Q: How many nodes are in this graph?\n"
+        full_node_count_prompt = init_prompt + graph_str + "\n" + node_count_prompt + end_count_prompt
 
         # Save prompt to file
         prompt_filename = f"data/prompts/node_count/prompt_{i}.txt"
@@ -171,8 +172,8 @@ def generate_data(n_graphs, n_nodes, p):
 
         edge_count = graph.number_of_edges()
         # Create prompt string
-        edge_count_prompt = f"Count the number of edges in the graph"
-        full_edge_count_prompt = init_prompt + graph_str + ". " + edge_count_prompt + end_count_prompt
+        edge_count_prompt = f"Q: How many edges are in this graph?\n"
+        full_edge_count_prompt = init_prompt + graph_str + "\n" + edge_count_prompt + end_count_prompt
 
         # Save prompt to file
         prompt_filename = f"data/prompts/edge_count/prompt_{i}.txt"
@@ -193,8 +194,8 @@ def generate_data(n_graphs, n_nodes, p):
         node_degree = graph.degree[node]
 
         # Create prompt string
-        node_degree_prompt = f"Calculate the degree of node {node}"
-        full_node_degree_prompt = init_prompt + graph_str + ". " + node_degree_prompt + end_count_prompt
+        node_degree_prompt = f"Q: What is the degree of node {node}?\n"
+        full_node_degree_prompt = init_prompt + graph_str + "\n" + node_degree_prompt + end_count_prompt
 
         # Save prompt to file
         prompt_filename = f"data/prompts/node_degree/prompt_{i}.txt"
@@ -214,8 +215,8 @@ def generate_data(n_graphs, n_nodes, p):
         random_nodes = random.sample(list(graph.nodes()), 2)
         node_a, node_b = random_nodes
 
-        edge_exists_prompt = f"Check if there is an edge between node {node_a} and node {node_b}"
-        full_edge_exists_prompt = init_prompt + graph_str + ". " + edge_exists_prompt + end_yes_no_prompt
+        edge_exists_prompt = f"Q: Is node {node_a} connected to node {node_b}? Only write 'Yes' or 'No'.\n"
+        full_edge_exists_prompt = init_prompt + graph_str + "\n" + edge_exists_prompt + end_yes_no_prompt
 
         # Save prompt to file
         prompt_filename = f"data/prompts/edge_exists/prompt_{i}.txt"

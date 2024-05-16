@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH -J test_file                         # Job name
-#SBATCH -o mx_7_%j.out                  # output file (%j expands to jobID) test_file_%j.out
-#SBATCH -e mx_7_%j.err                  # error log file (%j expands to jobID) test_file_%j.err
+#SBATCH -o ll3_8_add_%j.out                  # output file (%j expands to jobID) test_file_%j.out
+#SBATCH -e ll3_8_add_%j.err                  # error log file (%j expands to jobID) test_file_%j.err
 #SBATCH --mail-type=ALL                      # Request status by email 
 #SBATCH --mail-user=clc348@cornell.edu       # Email address to send results to.
 #SBATCH -N 1                                 # Total number of nodes requested
@@ -14,8 +14,8 @@
 #SBATCH --gres=gpu:a100:2              # Type/number of GPUs needed, --gres=gpu:1080ti:1, gpu:titanrtx:4,lee-compute-01, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri-interactive
 
 # Define arguments for Python file
-MODEL="mixtral" # ["llama2", "llama3", "opt", "openelm", "mistral", "mixtral", "phi"]
-SIZE="7B"
+MODEL="llama3" # ["llama2", "llama3", "opt", "openelm", "mistral", "mixtral", "phi"]
+SIZE="8B"
 prompt_type="add_edge" # add_edge, remove_edge, node_count, edge_count, node_degree, edge_exists
 
 # opt: 125m, 350m, 1.3b, 6.7b # nonsense?
