@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH -J test_file                         # Job name
-#SBATCH -o ll3_8_add_%j.out                  # output file (%j expands to jobID) test_file_%j.out
-#SBATCH -e ll3_8_add_%j.err                  # error log file (%j expands to jobID) test_file_%j.err
+#SBATCH -o ll3_70_edge_%j.out                  # output file (%j expands to jobID) test_file_%j.out
+#SBATCH -e ll3_70_edge_%j.err                  # error log file (%j expands to jobID) test_file_%j.err
 #SBATCH --mail-type=ALL                      # Request status by email 
 #SBATCH --mail-user=clc348@cornell.edu       # Email address to send results to.
 #SBATCH -N 1                                 # Total number of nodes requested
@@ -15,8 +15,8 @@
 
 # Define arguments for Python file
 MODEL="llama3" # ["llama2", "llama3", "opt", "openelm", "mistral", "mixtral", "phi"]
-SIZE="8B"
-prompt_type="add_edge" # add_edge, remove_edge, node_count, edge_count, node_degree, edge_exists
+SIZE="70B"
+prompt_type="edge_count" # add_edge, remove_edge, node_count, edge_count, node_degree, edge_exists
 
 # opt: 125m, 350m, 1.3b, 6.7b # nonsense?
 # openelm: 270M, 450M, 1_1B, 3B # not built for these types of questions?

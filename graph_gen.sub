@@ -14,10 +14,10 @@
 #SBATCH --gres=gpu:1080ti:1              # Type/number of GPUs needed, --gres=gpu:1080ti:1, gpu:titanrtx:4(S:0-1),lee-compute-01, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri, gpu:a100:8(S:0-1),nlplarge-compute-01,nlplarge-lillian-highpri-interactive
 
 # Define arguments
-n_graphs=5
-n_nodes=5
-p=0.5
+n_graphs=500 # 500 in Talk Like A Graph paper
+#n_nodes=5 # According to Talk Like A Graph paper, "all graphs had between 5 and 20 nodes"
+#p=0.5
 # prompt_type="add_edge" # add_edge, remove_edge, node_count, edge_count, node_degree, edge_exists
 
 # Run Python file with arguments
-python3 graph_generator.py --n_graphs $n_graphs --n_nodes $n_nodes --p $p
+python3 graph_generator.py --n_graphs $n_graphs

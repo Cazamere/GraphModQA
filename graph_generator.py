@@ -3,7 +3,7 @@ import networkx as nx
 import argparse
 import random
 
-def generate_data(n_graphs, n_nodes, p):
+def generate_data(n_graphs):
     # Create directories if they don't exist
     os.makedirs("data/input_graphs", exist_ok=True)
 
@@ -62,9 +62,13 @@ def generate_data(n_graphs, n_nodes, p):
     for i in range(n_graphs):
         print(f"Generating graph {i}")
         # Generate Erdos-Renyi graph that is not connected
+        p = random.uniform(0, 1)
+        n_nodes = random.randint(5, 20)
         graph = nx.erdos_renyi_graph(n_nodes, p)
 
+        # Ensure that the graph is not fully connected
         while nx.is_connected(graph):
+            p = random.uniform(0, 1)
             graph = nx.erdos_renyi_graph(n_nodes, p)
 
         # Convert graph to string
@@ -172,7 +176,7 @@ def generate_data(n_graphs, n_nodes, p):
 
         edge_count = graph.number_of_edges()
         # Create prompt string
-        edge_count_prompt = f"Q: How many edges are in this graph?\n"
+        edge_count_prompt = f"Q: How many edges are in this graph?\n" # TODO: in this undirected graph instead?
         full_edge_count_prompt = init_prompt + graph_str + "\n" + edge_count_prompt + end_count_prompt
 
         # Save prompt to file
@@ -194,7 +198,7 @@ def generate_data(n_graphs, n_nodes, p):
         node_degree = graph.degree[node]
 
         # Create prompt string
-        node_degree_prompt = f"Q: What is the degree of node {node}?\n"
+        node_degree_prompt = f"Q: How many neighbors does node {node} have?\n" # TODO: How many neighbors does node {node} have?/What is the degree of node {node}?/How many edges are connected to node {node}?
         full_node_degree_prompt = init_prompt + graph_str + "\n" + node_degree_prompt + end_count_prompt
 
         # Save prompt to file
@@ -237,14 +241,14 @@ def generate_data(n_graphs, n_nodes, p):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--n_graphs", type=int, help="number of graphs to generate")
-    parser.add_argument("--n_nodes", type=int, help="number of nodes in the graph")
-    parser.add_argument("--p", type=float, help="probability of an edge between any two nodes")
+    #parser.add_argument("--n_nodes", type=int, help="number of nodes in the graph")
+    #parser.add_argument("--p", type=float, help="probability of an edge between any two nodes")
     #parser.add_argument("--prompt_type", type=str, default="add_edge", help="type of prompt")
     args = parser.parse_args()
 
     n_graphs = args.n_graphs
-    n_nodes = args.n_nodes
-    p = args.p
+    #n_nodes = args.n_nodes
+    #p = args.p
     #prompt_type = args.prompt_type
 
-    generate_data(n_graphs, n_nodes, p)
+    generate_data(n_graphs)
