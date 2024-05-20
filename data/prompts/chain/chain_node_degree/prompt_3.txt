@@ -1,0 +1,11 @@
+The following matrix represents the adjacency matrix of an undirected graph, where the first row corresponds to node 0, the second row corresponds to node 1, and so on: 
+[[0 0 1 0 0]
+ [0 0 0 0 0]
+ [1 0 0 1 0]
+ [0 0 1 0 1]
+ [0 0 0 1 0]]
+Q: Perform the following operations on the graph:
+0: Remove node 4 from the graph.
+1: Remove the edge between node 2 and node 3.
+Q: How many neighbors does node 0 have?
+A: Final answer: The resulting adjacency matrix is: 

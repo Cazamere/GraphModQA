@@ -1,0 +1,22 @@
+The following matrix represents the adjacency matrix of an undirected graph, where the first row corresponds to node 0, the second row corresponds to node 1, and so on: 
+[[0 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
+ [1 0 1 0 0 0 1 1 0 1 1 0 0 0 0]
+ [0 1 0 0 0 0 0 0 0 0 1 0 0 0 0]
+ [0 0 0 0 1 0 0 0 0 0 0 0 0 0 0]
+ [0 0 0 1 0 0 0 0 0 0 1 0 0 1 0]
+ [0 0 0 0 0 0 0 0 0 0 0 0 1 1 0]
+ [0 1 0 0 0 0 0 0 1 0 0 0 0 0 0]
+ [0 1 0 0 0 0 0 0 1 0 0 1 0 0 0]
+ [0 0 0 0 0 0 1 1 0 0 0 0 0 0 0]
+ [0 1 0 0 0 0 0 0 0 0 0 0 0 0 0]
+ [0 1 1 0 1 0 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
+ [0 0 0 0 0 1 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 1 1 0 0 0 0 0 0 0 0 0]
+ [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]]
+Q: Perform the following operations on the graph:
+1: Add an edge between node 9 and node 3.
+2: Remove the edge between node 1 and node 6.
+3: Remove node 7 from the graph.
+Q: List all neighbors of node 5.
+A: Final answer: The final answer is: 

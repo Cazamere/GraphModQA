@@ -1,0 +1,12 @@
+The following matrix represents the adjacency matrix of an undirected graph, where the first row corresponds to node 0, the second row corresponds to node 1, and so on: 
+[[0 1 0 0 1]
+ [1 0 0 0 0]
+ [0 0 0 0 0]
+ [0 0 0 0 0]
+ [1 0 0 0 0]]
+Q: Perform the following operations on the graph:
+1: Add an edge between node 2 and node 1.
+2: Remove the edge between node 0 and node 4.
+3: Add a node to the graph.
+Q: Is node 4 connected to node 3? Only write 'Yes' or 'No'.
+A: Final answer: The final answer is: 

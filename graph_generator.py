@@ -2,8 +2,14 @@ import os
 import networkx as nx
 import argparse
 import random
+import sys
+import numpy as np
+
+from graph_generator_utils import add_edge, remove_edge, add_node, remove_node, node_count, edge_count, node_degree, edge_exists, connected_nodes, cycle, chain
 
 def generate_data(n_graphs):
+    # TODO: put all dir prep stuff this in a function
+
     # Create directories if they don't exist
     os.makedirs("data/input_graphs", exist_ok=True)
 
@@ -16,19 +22,40 @@ def generate_data(n_graphs):
     os.makedirs("data/prompts", exist_ok=True)
     os.makedirs("data/prompts/add_edge", exist_ok=True)
     os.makedirs("data/prompts/remove_edge", exist_ok=True)
+    os.makedirs("data/prompts/add_node", exist_ok=True)
+    os.makedirs("data/prompts/remove_node", exist_ok=True)
     os.makedirs("data/prompts/node_count", exist_ok=True)
     os.makedirs("data/prompts/edge_count", exist_ok=True)
     os.makedirs("data/prompts/node_degree", exist_ok=True)
     os.makedirs("data/prompts/edge_exists", exist_ok=True)
-
+    os.makedirs("data/prompts/connected_nodes", exist_ok=True)
+    os.makedirs("data/prompts/cycle", exist_ok=True)
+    os.makedirs("data/prompts/chain_node_count", exist_ok=True)
+    os.makedirs("data/prompts/chain_edge_count", exist_ok=True)
+    os.makedirs("data/prompts/chain_node_degree", exist_ok=True)
+    os.makedirs("data/prompts/chain_edge_exists", exist_ok=True)
+    os.makedirs("data/prompts/chain_connected_nodes", exist_ok=True)
+    os.makedirs("data/prompts/chain_cycle", exist_ok=True)
+    os.makedirs("data/prompts/chain_print", exist_ok=True)
     # Empty the directories if they are not empty
     prompt_directories = [
         "data/prompts/add_edge",
         "data/prompts/remove_edge",
+        "data/prompts/add_node",
+        "data/prompts/remove_node",
         "data/prompts/node_count",
         "data/prompts/edge_count",
         "data/prompts/node_degree",
-        "data/prompts/edge_exists"
+        "data/prompts/edge_exists",
+        "data/prompts/connected_nodes",
+        "data/prompts/cycle",
+        "data/prompts/chain_node_count",
+        "data/prompts/chain_edge_count",
+        "data/prompts/chain_node_degree",
+        "data/prompts/chain_edge_exists",
+        "data/prompts/chain_connected_nodes",
+        "data/prompts/chain_cycle",
+        "data/prompts/chain_print"
     ]
     for directory in prompt_directories:
         if os.listdir(directory):
@@ -39,25 +66,52 @@ def generate_data(n_graphs):
     os.makedirs("data/solutions", exist_ok=True)
     os.makedirs("data/solutions/add_edge", exist_ok=True)
     os.makedirs("data/solutions/remove_edge", exist_ok=True)
+    os.makedirs("data/solutions/add_node", exist_ok=True)
+    os.makedirs("data/solutions/remove_node", exist_ok=True)
     os.makedirs("data/solutions/node_count", exist_ok=True)
     os.makedirs("data/solutions/edge_count", exist_ok=True)
     os.makedirs("data/solutions/node_degree", exist_ok=True)
     os.makedirs("data/solutions/edge_exists", exist_ok=True)
+    os.makedirs("data/solutions/connected_nodes", exist_ok=True)
+    os.makedirs("data/solutions/cycle", exist_ok=True)
+    os.makedirs("data/solutions/chain_node_count", exist_ok=True)
+    os.makedirs("data/solutions/chain_edge_count", exist_ok=True)
+    os.makedirs("data/solutions/chain_node_degree", exist_ok=True)
+    os.makedirs("data/solutions/chain_edge_exists", exist_ok=True)
+    os.makedirs("data/solutions/chain_connected_nodes", exist_ok=True)
+    os.makedirs("data/solutions/chain_cycle", exist_ok=True)
+    os.makedirs("data/solutions/chain_print", exist_ok=True)
 
     # Empty the directories if they are not empty
     solution_directories = [
         "data/solutions/add_edge",
         "data/solutions/remove_edge",
+        "data/solutions/add_node",
+        "data/solutions/remove_node",
         "data/solutions/node_count",
         "data/solutions/edge_count",
         "data/solutions/node_degree",
-        "data/solutions/edge_exists"
+        "data/solutions/edge_exists",
+        "data/solutions/connected_nodes",
+        "data/solutions/cycle",
+        "data/solutions/chain_node_count",
+        "data/solutions/chain_edge_count",
+        "data/solutions/chain_node_degree",
+        "data/solutions/chain_edge_exists",
+        "data/solutions/chain_connected_nodes",
+        "data/solutions/chain_cycle",
+        "data/solutions/chain_print"
     ]
     for directory in solution_directories:
         if os.listdir(directory):
             for file_name in os.listdir(directory):
                 file_path = os.path.join(directory, file_name)
                 os.remove(file_path)
+
+    augment_tasks = ["add_edge", "remove_edge", "add_node", "remove_node"]
+    static_tasks = ["edge_exists", "cycle", "node_count", "edge_count", "node_degree", "connected_nodes"]
+
+    possible_final_tasks = static_tasks + ["print_adjacency_matrix"]
     
     for i in range(n_graphs):
         print(f"Generating graph {i}")
@@ -66,8 +120,8 @@ def generate_data(n_graphs):
         n_nodes = random.randint(5, 20)
         graph = nx.erdos_renyi_graph(n_nodes, p)
 
-        # Ensure that the graph is not fully connected
-        while nx.is_connected(graph):
+        # Ensure that the graph is not fully connected and has at least one edge
+        while nx.is_connected(graph) or graph.number_of_edges() == 0:
             p = random.uniform(0, 1)
             graph = nx.erdos_renyi_graph(n_nodes, p)
 
@@ -84,159 +138,110 @@ def generate_data(n_graphs):
         #end_count_prompt = ", and surround your final answer in parentheses, like this: (answer). \nA:" # kind of works
         end_count_prompt = "A: Final answer: The final answer is: "
         end_yes_no_prompt = "A: Final answer: The final answer is: " #TODO: something like "present answer as _"
+        
         # Graph augmentation tasks
-
-        # ----------------------------
-        # --- Add edge  ---
-        # ----------------------------
-
-        # Select two random nodes that are not connected
-        unconnected_nodes = []
-        for node_a in graph.nodes():
-            for node_b in graph.nodes():
-                if node_a != node_b and not graph.has_edge(node_a, node_b):
-                    unconnected_nodes.append((node_a, node_b))
-        #print(f"unconnected_nodes: {unconnected_nodes}")
-        node_a, node_b = random.sample(unconnected_nodes, 1)[0]
-
-        # Create prompt string
-        add_edge_prompt = f"Q: Add an edge between node {node_a} and node {node_b}. Only write the resulting adjacency matrix.\n"
-        full_add_edge_prompt = init_prompt + graph_str + "\n" + add_edge_prompt + end_matrix_prompt
-
-        # Save prompt to file
-        prompt_filename = f"data/prompts/add_edge/prompt_{i}.txt"
-        with open(prompt_filename, "w") as prompt_file:
-            prompt_file.write(full_add_edge_prompt)
-
-        # Create new graph with added edge
-        add_edge_graph = graph.copy()
-        add_edge_graph.add_edge(node_a, node_b)
-
-        # Convert graph to string
-        new_graph_str = str(nx.adjacency_matrix(add_edge_graph).todense())
-
-        # Write new graph to file
-        solution_filename = f"data/solutions/add_edge/solution_{i}.txt"
-        with open(solution_filename, "w") as solution_file:
-            solution_file.write(new_graph_str)
-
-        # ----------------------------
-        # --- Remove edge  ---
-        # ----------------------------
-
-        # Select a random edge
-        edge = random.choice(list(graph.edges()))
-
-        # Create prompt string
-        node_a, node_b = edge
-        remove_edge_prompt = f"Q: Remove the edge between node {node_a} and node {node_b}. Only write the resulting adjacency matrix.\n"
-        full_remove_edge_prompt = init_prompt + graph_str + "\n" + remove_edge_prompt + end_matrix_prompt
-
-        # Save prompt to file
-        prompt_filename = f"data/prompts/remove_edge/prompt_{i}.txt"
-        with open(prompt_filename, "w") as prompt_file:
-            prompt_file.write(full_remove_edge_prompt)
-
-        # Create new graph with edge removed
-        remove_edge_graph = graph.copy()
-        remove_edge_graph.remove_edge(*edge)
-
-        # Convert graph to string
-        new_graph_str = str(nx.adjacency_matrix(remove_edge_graph).todense().astype(int))
-
-        # Write new graph to file
-        solution_filename = f"data/solutions/remove_edge/solution_{i}.txt"
-        with open(solution_filename, "w") as solution_file:
-            solution_file.write(new_graph_str)
-
-        # Basic graph tasks
-
-        # ----------------------------
-        # --- Node count  ---
-        # ----------------------------
-
-        node_count = graph.number_of_nodes()
-        # Create prompt string
-        node_count_prompt = f"Q: How many nodes are in this graph?\n"
-        full_node_count_prompt = init_prompt + graph_str + "\n" + node_count_prompt + end_count_prompt
-
-        # Save prompt to file
-        prompt_filename = f"data/prompts/node_count/prompt_{i}.txt"
-        with open(prompt_filename, "w") as prompt_file:
-            prompt_file.write(full_node_count_prompt)
-
-        # Save solution to file
-        solution_filename = f"data/solutions/node_count/solution_{i}.txt"
-        with open(solution_filename, "w") as solution_file:
-            solution_file.write(str(node_count))
-
-        # ----------------------------
-        # --- Edge count  ---
-        # ----------------------------
-
-        edge_count = graph.number_of_edges()
-        # Create prompt string
-        edge_count_prompt = f"Q: How many edges are in this graph?\n" # TODO: in this undirected graph instead?
-        full_edge_count_prompt = init_prompt + graph_str + "\n" + edge_count_prompt + end_count_prompt
-
-        # Save prompt to file
-        prompt_filename = f"data/prompts/edge_count/prompt_{i}.txt"
-        with open(prompt_filename, "w") as prompt_file:
-            prompt_file.write(full_edge_count_prompt)
-
-        # Save solution to file
-        solution_filename = f"data/solutions/edge_count/solution_{i}.txt"
-        with open(solution_filename, "w") as solution_file:
-            solution_file.write(str(edge_count))
-
-        # ----------------------------
-        # --- Node degree  ---
-        # ----------------------------
-
-        # Select a random node
-        node = random.choice(list(graph.nodes()))
-        node_degree = graph.degree[node]
-
-        # Create prompt string
-        node_degree_prompt = f"Q: How many neighbors does node {node} have?\n" # TODO: How many neighbors does node {node} have?/What is the degree of node {node}?/How many edges are connected to node {node}?
-        full_node_degree_prompt = init_prompt + graph_str + "\n" + node_degree_prompt + end_count_prompt
-
-        # Save prompt to file
-        prompt_filename = f"data/prompts/node_degree/prompt_{i}.txt"
-        with open(prompt_filename, "w") as prompt_file:
-            prompt_file.write(full_node_degree_prompt)
-
-        # Save solution to file
-        solution_filename = f"data/solutions/node_degree/solution_{i}.txt"
-        with open(solution_filename, "w") as solution_file:
-            solution_file.write(str(node_degree))
-
-        # ----------------------------
-        # --- Edge exists  ---
-        # ----------------------------
-
-        # Select two random nodes from the graph
-        random_nodes = random.sample(list(graph.nodes()), 2)
-        node_a, node_b = random_nodes
-
-        edge_exists_prompt = f"Q: Is node {node_a} connected to node {node_b}? Only write 'Yes' or 'No'.\n"
-        full_edge_exists_prompt = init_prompt + graph_str + "\n" + edge_exists_prompt + end_yes_no_prompt
-
-        # Save prompt to file
-        prompt_filename = f"data/prompts/edge_exists/prompt_{i}.txt"
-        with open(prompt_filename, "w") as prompt_file:
-            prompt_file.write(full_edge_exists_prompt)
-
-        # Save solution to file
-        solution_filename = f"data/solutions/edge_exists/solution_{i}.txt"
-        with open(solution_filename, "w") as solution_file:
-            if graph.has_edge(node_a, node_b):
-                solution_file.write("Yes")
-            else:
-                solution_file.write("No")
+        add_edge_graph, _ = add_edge(graph, graph_str, init_prompt, end_matrix_prompt, i, False)
+        remove_edge_graph, _ = remove_edge(graph, graph_str, init_prompt, end_matrix_prompt, i, False)
+        add_node_graph, _ = add_node(graph, graph_str, init_prompt, end_matrix_prompt, i, False)
+        remove_node_graph, _ = remove_node(graph, graph_str, init_prompt, end_matrix_prompt, i, False)
+        node_count(graph, graph_str, init_prompt, end_count_prompt, i)
+        edge_count(graph, graph_str, init_prompt, end_count_prompt, i)
+        node_degree(graph, graph_str, init_prompt, end_count_prompt, i)
+        edge_exists(graph, graph_str, init_prompt, end_yes_no_prompt, i)
+        connected_nodes(graph, graph_str, init_prompt, end_count_prompt, i)
+        cycle(graph, graph_str, init_prompt, end_yes_no_prompt, i)
+        chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_yes_no_prompt, i, "edge_exists")
+        chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_yes_no_prompt, i, "cycle")
+        chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_count_prompt, i, "node_count")
+        chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_count_prompt, i, "edge_count")
+        chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_count_prompt, i, "node_degree")
+        chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_count_prompt, i, "connected_nodes")
+        chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_matrix_prompt, i, "print_adjacency_matrix")
 
     print("Data generation complete!")
 
+
+def generate_chains(n_graphs):
+    for chain_length in range(1, 11):
+        # Create directories if they don't exist
+        os.makedirs(f"data/prompts/chain_{chain_length}_node_count", exist_ok=True)
+        os.makedirs(f"data/prompts/chain_{chain_length}_edge_count", exist_ok=True)
+        os.makedirs(f"data/prompts/chain_{chain_length}_node_degree", exist_ok=True)
+        os.makedirs(f"data/prompts/chain_{chain_length}_edge_exists", exist_ok=True)
+        os.makedirs(f"data/prompts/chain_{chain_length}_connected_nodes", exist_ok=True)
+        os.makedirs(f"data/prompts/chain_{chain_length}_cycle", exist_ok=True)
+        os.makedirs(f"data/prompts/chain_{chain_length}_print", exist_ok=True)
+
+        # Empty the directories if they are not empty
+        prompt_directories = [
+            f"data/prompts/chain_{chain_length}_node_count",
+            f"data/prompts/chain_{chain_length}_edge_count",
+            f"data/prompts/chain_{chain_length}_node_degree",
+            f"data/prompts/chain_{chain_length}_edge_exists",
+            f"data/prompts/chain_{chain_length}_connected_nodes",
+            f"data/prompts/chain_{chain_length}_cycle",
+            f"data/prompts/chain_{chain_length}_print"
+        ]
+
+        for directory in prompt_directories:
+            if os.listdir(directory):
+                for file_name in os.listdir(directory):
+                    file_path = os.path.join(directory, file_name)
+                    os.remove(file_path)
+
+        os.makedirs(f"data/solutions/chain_{chain_length}_node_count", exist_ok=True)
+        os.makedirs(f"data/solutions/chain_{chain_length}_edge_count", exist_ok=True)
+        os.makedirs(f"data/solutions/chain_{chain_length}_node_degree", exist_ok=True)
+        os.makedirs(f"data/solutions/chain_{chain_length}_edge_exists", exist_ok=True)
+        os.makedirs(f"data/solutions/chain_{chain_length}_connected_nodes", exist_ok=True)
+        os.makedirs(f"data/solutions/chain_{chain_length}_cycle", exist_ok=True)
+        os.makedirs(f"data/solutions/chain_{chain_length}_print", exist_ok=True)
+
+        # Empty the directories if they are not empty
+        solution_directories = [
+            f"data/solutions/chain_{chain_length}_node_count",
+            f"data/solutions/chain_{chain_length}_edge_count",
+            f"data/solutions/chain_{chain_length}_node_degree",
+            f"data/solutions/chain_{chain_length}_edge_exists",
+            f"data/solutions/chain_{chain_length}_connected_nodes",
+            f"data/solutions/chain_{chain_length}_cycle",
+            f"data/solutions/chain_{chain_length}_print"
+        ]
+
+        for directory in solution_directories:
+            if os.listdir(directory):
+                for file_name in os.listdir(directory):
+                    file_path = os.path.join(directory, file_name)
+                    os.remove(file_path)
+
+    augment_tasks = ["add_edge", "remove_edge", "add_node", "remove_node"]
+    static_tasks = ["edge_exists", "cycle", "node_count", "edge_count", "node_degree", "connected_nodes"]
+    input_dir = "data/input_graphs"
+
+    for chain_length in range(1, 11):
+        for i in range(n_graphs):
+            print(f"Generating chain prompt {i}")
+            # Generate Erdos-Renyi graph that is not connected
+            input_filename = f"graph_{i}.txt"
+
+            # Read input graph
+            with open(os.path.join(input_dir, input_filename), "r") as input_file:
+                graph_str = input_file.read()
+
+            graph = nx.from_numpy_matrix(np.array(eval(graph_str)))
+
+            init_prompt = "The following matrix represents the adjacency matrix of an undirected graph, where the first row corresponds to node 0, the second row corresponds to node 1, and so on: \n"
+            end_matrix_prompt = "A: Final answer: The resulting adjacency matrix is: "
+            end_count_prompt = "A: Final answer: The final answer is: "
+            end_yes_no_prompt = "A: Final answer: The final answer is: "
+
+            chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_yes_no_prompt, i, "edge_exists", chain_length)
+            chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_yes_no_prompt, i, "cycle", chain_length)
+            chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_count_prompt, i, "node_count", chain_length)
+            chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_count_prompt, i, "edge_count", chain_length)
+            chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_count_prompt, i, "node_degree", chain_length)
+            chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_count_prompt, i, "connected_nodes", chain_length)
+            chain(graph, graph_str, augment_tasks, static_tasks, init_prompt, end_matrix_prompt, i, "print_adjacency_matrix", chain_length)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -244,11 +249,18 @@ if __name__ == "__main__":
     #parser.add_argument("--n_nodes", type=int, help="number of nodes in the graph")
     #parser.add_argument("--p", type=float, help="probability of an edge between any two nodes")
     #parser.add_argument("--prompt_type", type=str, default="add_edge", help="type of prompt")
+    parser.add_argument("--chain", type=bool, help="whether to generate chain prompts")
+    
     args = parser.parse_args()
 
     n_graphs = args.n_graphs
     #n_nodes = args.n_nodes
     #p = args.p
     #prompt_type = args.prompt_type
-
-    generate_data(n_graphs)
+    chain = args.chain
+    chain = True
+    if chain:
+        print("Generating chain prompts")
+        generate_chains(n_graphs)
+    else:  
+        generate_data(n_graphs)

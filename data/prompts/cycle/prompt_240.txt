@@ -1,0 +1,9 @@
+The following matrix represents the adjacency matrix of an undirected graph, where the first row corresponds to node 0, the second row corresponds to node 1, and so on: 
+[[0 0 0 0 0 0]
+ [0 0 0 0 0 1]
+ [0 0 0 0 0 0]
+ [0 0 0 0 0 0]
+ [0 0 0 0 0 0]
+ [0 1 0 0 0 0]]
+Q: Does this graph contain a cycle? Only write 'Yes' or 'No'.
+A: Final answer: The final answer is: 
