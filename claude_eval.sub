@@ -1,0 +1,43 @@
+#!/bin/bash
+
+#SBATCH -J claude                       # Job name
+#SBATCH -o claude_%j.out                  # output file (%j expands to jobID) test_file_%j.out
+#SBATCH -e claude_%j.err                  # error log file (%j expands to jobID) test_file_%j.err
+#SBATCH --mail-type=ALL                      # Request status by email 
+#SBATCH --mail-user=clc348@cornell.edu       # Email address to send results to.
+#SBATCH -N 1                                 # Total number of nodes requested
+#SBATCH -n 1                                 # Total number of cores requested
+#SBATCH --get-user-env                       # retrieve the users login environment
+#SBATCH --mem=16G                           # server memory requested (per node)
+#SBATCH -t 99:00:00                           # Time limit (hh:mm:ss)
+#SBATCH --partition=default_partition         # Request partition, --partition=default_partition, nlplarge-lillian-highpri, nlplarge, gpu, damle + a6000, lee + titanrtx
+#SBATCH --account=lee
+
+# Define arguments for Python file
+MODEL="claude-3-7-sonnet-20250219-thinking" # ["llama2", "llama3", "opt", "openelm", "mistral", "mixtral", "phi", "qwen2", "gpt-4o", "gpt-4o-mini", "gpt-4-0125-preview, "gpt-3.5-turbo-0125", "gpt-3.5-turbo-1106", "gpt-4-0613", "o1-mini", "llama3.1", "gemma", "palm2"]
+SIZE="70B"
+# non chain prompt_types: "add_edge" "remove_edge" "add_node" "remove_node" "node_count" "edge_count" "node_degree" "edge_exists" "connected_nodes" "cycle"
+# property prompt_types: "node_count" "edge_count" "node_degree" "edge_exists" "connected_nodes" "cycle" "print_graph"
+# mod prompt_types: "add_edge" "remove_edge" "add_node" "remove_node"
+# chain type: "node_count" "edge_count" "node_degree" "print_adjacency_matrix"
+#MAX_LENGTH=6000 # if the model take in a 20x20 adjacency matrix with whitespace in between each entry, that input is of size ~1600
+
+# todo: add num_graphs as an argument
+
+# opt: 125m, 350m, 1.3b, 6.7b # nonsense?
+# openelm: 270M, 450M, 1_1B, 3B # not built for these types of questions?
+# llama2: 7b, 13b, 70b 
+# llama3: 8B, 70B
+# mistral: 7B
+# mixtral: 7B, 22B
+# phi: 4k, 128k # doesn't output anything?
+# qwen: 72B
+# gpt-3.5: 175B, 570B, 1.3T, 175B, 570B, 1.3T
+# llama3.1: 8B, 70B, 405B
+# gemma: 2b, 9b, 27b
+
+# "small", "medium", "large"
+# ["node_count", "edge_count", "node_degree", "connected_nodes", "print_graph", "isolated_nodes", "triangle_count", "overlapped_nodes", "overlapped_edges"]
+
+# Run Python file with arguments
+python3 real_model_eval.py --model $MODEL --size $SIZE --graph_size "large" --task "triangle_count"

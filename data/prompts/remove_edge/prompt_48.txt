@@ -1,18 +1,12 @@
 The following matrix represents the adjacency matrix of an undirected graph, where the first row corresponds to node 0, the second row corresponds to node 1, and so on: 
-[[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 1 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 0 0 0 0 1 0]
- [0 0 0 0 0 0 0 0 0 1 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
- [0 0 0 0 1 0 0 1 0 0 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
- [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0]
- [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]]
-Q: Remove the edge between node 7 and node 9. Only write the resulting adjacency matrix.
-A: Final answer: The resulting adjacency matrix is: 
+[[0 0 1 0 1 0 1 1 0]
+ [0 0 0 1 1 0 0 1 1]
+ [1 0 0 1 1 1 0 0 1]
+ [0 1 1 0 1 0 0 1 1]
+ [1 1 1 1 0 1 1 0 0]
+ [0 0 1 0 1 0 0 1 1]
+ [1 0 0 0 1 0 0 1 0]
+ [1 1 0 1 0 1 1 0 0]
+ [0 1 1 1 0 1 0 0 0]]
+Q: Remove the edge between node 0 and node 2, and write the resulting adjacency matrix.
+A: 
