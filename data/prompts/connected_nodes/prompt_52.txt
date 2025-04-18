@@ -1,9 +1,0 @@
-The following matrix represents the adjacency matrix of an undirected graph, where the first row corresponds to node 0, the second row corresponds to node 1, and so on: 
-[[0 1 1 1 1 1]
- [1 0 1 0 1 1]
- [1 1 0 1 1 1]
- [1 0 1 0 1 1]
- [1 1 1 1 0 1]
- [1 1 1 1 1 0]]
-Q: List all neighbors of node 3.
-A: 
