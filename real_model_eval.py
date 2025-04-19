@@ -178,7 +178,7 @@ def eval(input_dir, model_name, tokenizer, device, model, augment_tasks, size, a
             response = requests.post(
                 url="https://openrouter.ai/api/v1/chat/completions",
                 headers={
-                    "Authorization": f"Bearer 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 ",
+                    "Authorization": f"Bearer {key}",
                 },
                 data=json.dumps({
                     "model": router_model_name, # Optional
@@ -192,21 +192,6 @@ def eval(input_dir, model_name, tokenizer, device, model, augment_tasks, size, a
                 })
             )
 
-            """
-            client = Fireworks(api_key="fw_3ZbWqs7M3sQ9zhmNthidkkB8")
-            response = client.chat.completions.create(
-            model="accounts/fireworks/models/llama-v3p1-405b-instruct",
-            messages=[{
-            "role": "user",
-            "content": prompt,
-            }],
-            )
-
-
-            # Access and print the completion text
-            output_string = response.choices[0].message.content
-
-            """
 
             # Parse the JSON response
             data = response.json()
