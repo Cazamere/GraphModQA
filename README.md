@@ -1,4 +1,4 @@
-# GraphModQA: Evaluating LLMs on Real-World Graph Reasoning
+# DyGraphQA: Evaluating LLMs on Real-World Graph Reasoning
 
 This repository contains code for generating and evaluating real-world graph reasoning tasks using large language models (LLMs), as described in our research paper.
 
