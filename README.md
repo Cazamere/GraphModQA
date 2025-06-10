@@ -1,8 +1,10 @@
-# DyGraphQA-Real: Evaluating LLMs on Real-World Graph Reasoning
+# DyGraphQA: Evaluating LLMs on Fully Dynamic Graph Reasoning Tasks
 
-This repository contains code for generating and evaluating real-world graph reasoning tasks using large language models (LLMs), based on a real-world coauthorship network from DBLP. It is part of the larger DyGraphQA benchmark.
+This repository contains code for generating and evaluating LLMs on both DyGraphQA-Real and DyGraphQA-Synth.
 
 ---
+
+# DyGraphQA-Real
 
 ## 🔧 Setup
 
@@ -41,12 +43,24 @@ Once graphs are generated, evaluate an LLM on a specific graph reasoning task:
 ```bash
 python3 real_model_eval.py \
   --model $MODEL \
-  --size 405B \
-  --graph_size "large" \
-  --task "triangle_count"
+  --size "405B" \
+  --graph_size $SIZE \
+  --task $TASK
 ```
 
 ### ✅ Valid options:
+
+- **`--model`**  
+  - `gpt-4o-mini`  
+  - `o1-mini`  
+  - `o3-mini`  
+  - `claude-3-7-sonnet-20250219`  
+  - `llama3.1`
+ 
+ - **`--graph_size`**  
+  - `small`  
+  - `medium`  
+  - `large`
 
 - **`--task`**  
   - `node_count`  
@@ -58,11 +72,40 @@ python3 real_model_eval.py \
   - `triangle_count`  
   - `overlapped_nodes`  
   - `overlapped_edges`
+  
+---
 
-- **`--graph_size`**  
-  - `small`  
-  - `medium`  
-  - `large`
+# DyGraphQA-Synth
+
+## 📈 Generate Graphs
+
+Run the following script to generate synthetic graphs:
+
+```bash
+python3 graph_generator.py --n_graphs $n_graphs --experimentType "encoding_chain"
+```
+
+> 🔢 Again, we use `250` in our paper.
+
+---
+
+## 🤖 Evaluate Models on Graph Tasks
+
+After generating graphs, you can evaluate an LLM on specific graph reasoning tasks using the following command:
+
+```bash
+python3 model_eval.py \
+  --model $MODEL \
+  --size "405B" \
+  --prompt_types $PROMPT_TYPE \
+  --modification $MODIFICATION \
+  --encoding $ENCODING \
+  --chainLength $CHAIN_LENGTH \
+  --ablation True \
+  --ablationType "encoding_chain_no_print"
+```
+
+### ✅ Valid Options
 
 - **`--model`**  
   - `gpt-4o-mini`  
@@ -71,14 +114,45 @@ python3 real_model_eval.py \
   - `claude-3-7-sonnet-20250219`  
   - `llama3.1`
 
+- **`--prompt_types`**  
+  Graph reasoning task:
+  - `node_count`  
+  - `edge_count`  
+  - `node_degree`  
+  - `connected_nodes`  
+  - `print_graph`
+
+- **`--modification`**  
+  Type of graph modification:
+  - `add_edge`  
+  - `remove_edge`  
+  - `add_node`  
+  - `remove_node`  
+  - `mix`
+
+- **`--encoding`**  
+  Graph encoding format:
+  - `adjacency_matrix`
+
+- **`--chainLength`**  
+  Length of modification chain:
+  - `1`, `2`, `3`, `4`, `5`
+
 ---
 
-## 📦 DyGraphQA-Synth: Synthetic Dynamic Graph Reasoning Tasks
+### 🔁 Example Usage
 
-DyGraphQA-Synth is the complementary synthetic dataset designed to evaluate LLMs on dynamic graph modifications and reasoning over controlled synthetic structures.  
-👉 **Instructions and scripts for DyGraphQA-Synth coming soon.**
-
----
+```bash
+python3 model_eval.py \
+  --model gpt-4o-mini \
+  --size 405B \
+  --prompt_types "node_count" \
+  --ablation True \
+  --ablationType "encoding_chain_no_print" \
+  --modification "mix" \
+  --encoding "adjacency_matrix" \
+  --chainLength 5
+```
 
 ## 📄 Citation
 
