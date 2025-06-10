@@ -1,6 +1,6 @@
-# DyGraphQA: Evaluating LLMs on Real-World Graph Reasoning
+# DyGraphQA-Real: Evaluating LLMs on Real-World Graph Reasoning
 
-This repository contains code for generating and evaluating real-world graph reasoning tasks using large language models (LLMs), as described in our research paper.
+This repository contains code for generating and evaluating real-world graph reasoning tasks using large language models (LLMs), based on a real-world coauthorship network from DBLP. It is part of the larger DyGraphQA benchmark.
 
 ---
 
@@ -70,6 +70,13 @@ python3 real_model_eval.py \
   - `o3-mini`  
   - `claude-3-7-sonnet-20250219`  
   - `llama3.1`
+
+---
+
+## 📦 DyGraphQA-Synth: Synthetic Dynamic Graph Reasoning Tasks
+
+DyGraphQA-Synth is the complementary synthetic dataset designed to evaluate LLMs on dynamic graph modifications and reasoning over controlled synthetic structures.  
+👉 **Instructions and scripts for DyGraphQA-Synth coming soon.**
 
 ---
 
