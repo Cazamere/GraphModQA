@@ -229,6 +229,19 @@ python3 model_eval.py \
   <br><br>
 </p>
 
+---
+
+# DyGraphQA-Synth Example Prompt & LLM Output Visualizations
+
+<p align="center">
+  <img src="images/zero prompt.png" width="1000" />
+  <br><br>
+  <img src="images/cot prompt.png" width="1000" />
+  <br><br>
+  <img src="images/map prompt.png" width="1000" />
+  <br><br>
+</p>
+
 # 📄 Citation
 
 If you use this code in your work, please cite our paper (coming soon).
