@@ -154,6 +154,18 @@ python3 model_eval.py \
   --chainLength 5
 ```
 
-## 📄 Citation
+---
+
+# DyGraphQA-Real Dataset Statistics
+
+<p align="center">
+  <img src="img1.png" width="200" />
+  <img src="img2.png" width="200" />
+  <img src="img3.png" width="200" />
+</p>
+
+---
+
+# 📄 Citation
 
 If you use this code in your work, please cite our paper (coming soon).
