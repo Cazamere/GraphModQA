@@ -242,6 +242,40 @@ python3 model_eval.py \
   <br><br>
 </p>
 
+---
+
+# DyGraphQA-Synth Performance on Print Graph
+
+<p align="center">
+  <img src="images/print.png" width="1000" />
+</p>
+
+---
+
+# DyGraphQA-Synth Ablation Results: In-Context Learning
+
+<p align="center">
+  <img src="images/in.png" width="1000" />
+</p>
+
+---
+
+# DyGraphQA-Synth Ablation Results: Varying Final Questions
+
+<p align="center">
+  <img src="images/vary.png" width="1000" />
+</p>
+
+---
+
+# DyGraphQA-Synth Error Analysis
+
+<p align="center">
+  <img src="images/errors.png" width="1000" />
+</p>
+
+---
+
 # 📄 Citation
 
 If you use this code in your work, please cite our paper (coming soon).
